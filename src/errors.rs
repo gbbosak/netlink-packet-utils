@@ -61,6 +61,13 @@ pub enum DecodeError {
     #[error("Invalid i32")]
     InvalidI32,
 
+    #[error("Invalid {name}: length {len} < {buffer_len}")]
+    InvalidBufferLength {
+        name: &'static str,
+        len: usize,
+        buffer_len: usize,
+    },
+
     #[error(transparent)]
     InvalidNLABuffer(#[from] NLAError),
 
