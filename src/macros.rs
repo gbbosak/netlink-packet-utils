@@ -192,11 +192,15 @@ macro_rules! buffer_check_length {
             fn check_buffer_length(&self) -> Result<(), DecodeError> {
                 let len = self.buffer.as_ref().len();
                 if len < $buffer_len {
-                    Err(DecodeError::InvalidBufferLength {
-                        name: stringify!($name),
-                        len,
-                        buffer_len: $buffer_len,
-                    })
+                    Err(format!(
+                        concat!(
+                            "invalid ",
+                            stringify!($name),
+                            ": length {} < {}"
+                        ),
+                        len, $buffer_len
+                    )
+                    .into())
                 } else {
                     Ok(())
                 }
