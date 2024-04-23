@@ -32,29 +32,53 @@ impl From<anyhow::Error> for EncodeError {
 }
 
 #[derive(Debug, Error)]
-#[error("Decode error occurred: {inner}")]
-pub struct DecodeError {
-    inner: anyhow::Error,
+pub enum DecodeError {
+    #[error("Invalid MAC address")]
+    InvalidMACAddress,
+
+    #[error("Invalid IPv6 address")]
+    InvalidIPv6Address,
+
+    #[error("Invalid string")]
+    Utf8Error(#[from] std::string::FromUtf8Error),
+
+    #[error("Invalid u8")]
+    InvalidU8,
+
+    #[error("Invalid u16")]
+    InvalidU16,
+
+    #[error("Invalid u32")]
+    InvalidU32,
+
+    #[error("Invalid u64")]
+    InvalidU64,
+
+    #[error("Invalid u128")]
+    InvalidU128,
+
+    #[error("Invalid i32")]
+    InvalidI32,
+
+    #[error("Invalid {name}: length {len} < {buffer_len}")]
+    InvalidBufferLength {
+        name: &'static str,
+        len: usize,
+        buffer_len: usize,
+    },
+
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
 
 impl From<&'static str> for DecodeError {
     fn from(msg: &'static str) -> Self {
-        DecodeError {
-            inner: anyhow!(msg),
-        }
+        DecodeError::Other(anyhow!(msg))
     }
 }
 
 impl From<String> for DecodeError {
     fn from(msg: String) -> Self {
-        DecodeError {
-            inner: anyhow!(msg),
-        }
-    }
-}
-
-impl From<anyhow::Error> for DecodeError {
-    fn from(inner: anyhow::Error) -> DecodeError {
-        DecodeError { inner }
+        DecodeError::Other(anyhow!(msg))
     }
 }
