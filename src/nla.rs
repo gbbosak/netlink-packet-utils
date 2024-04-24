@@ -37,12 +37,6 @@ pub enum NlaError {
     InvalidLength { nla_len: u16 },
 }
 
-impl From<NlaError> for DecodeError {
-    fn from(e: NlaError) -> DecodeError {
-        DecodeError::Other(e.into())
-    }
-}
-
 #[macro_export]
 macro_rules! nla_align {
     ($len: expr) => {
