@@ -72,6 +72,18 @@ pub enum DecodeError {
 
     #[error(transparent)]
     Other(#[from] anyhow::Error),
+
+    #[error("Failed to parse NLMSG_ERROR: {0}")]
+    FailedToParseNlMsgError(Box<DecodeError>),
+
+    #[error("Failed to parse NLMSG_DONE: {0}")]
+    FailedToParseNlMsgDone(Box<DecodeError>),
+
+    #[error("Failed to parse message with type {message_type}: {source}")]
+    FailedToParseMessageWithType { message_type: u16, source: Box<DecodeError> },
+
+    #[error("Failed to parse netlink header: {0}")]
+    FailedToParseNetlinkHeader(Box<DecodeError>),
 }
 
 impl From<&'static str> for DecodeError {
